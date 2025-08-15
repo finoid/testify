@@ -1,0 +1,16 @@
+io.github.finoid.testify.snapshot.SnapshotterUnitTest.givenRecordInstanceToBeSerialized_whenBase64Snapshot_thenSuccessfulBase64SnapshotTaken=[
+VXNlcltpZD0xLCBuYW1lPUpvaG5d
+]
+
+
+io.github.finoid.testify.snapshot.SnapshotterUnitTest.givenRecordInstanceToBeSerialized_whenJsonSnapshot_thenSuccessfulJsonSnapshotTaken=[
+  {
+    "id" : 1,
+    "name" : "John"
+  }
+]
+
+
+io.github.finoid.testify.snapshot.SnapshotterUnitTest.givenRecordInstanceToBeSerialized_whenPlainSnapshot_thenSuccessfulPlainSnapshotTaken=[
+User[id=1, name=John]
+]
