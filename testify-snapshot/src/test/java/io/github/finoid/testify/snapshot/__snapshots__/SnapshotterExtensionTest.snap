@@ -1,0 +1,16 @@
+io.github.finoid.testify.snapshot.SnapshotterExtensionTest.givenSnapshotter_whenUserSnapshottedAsBase64_thenSnapshotCreated=[
+VXNlcltpZD0xLCBuYW1lPUpvaG5d
+]
+
+
+io.github.finoid.testify.snapshot.SnapshotterExtensionTest.givenSnapshotter_whenUserSnapshottedAsJson_thenSnapshotCreated=[
+  {
+    "id" : 1,
+    "name" : "John"
+  }
+]
+
+
+io.github.finoid.testify.snapshot.SnapshotterExtensionTest.givenSnapshotter_whenUserSnapshottedAsPlain_thenSnapshotCreated=[
+User[id=1, name=John]
+]

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+        "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+        "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+<suppressions>
+    <suppress files="MockMvcBuilder\.java" checks="[a-zA-Z0-9]*"/>
+    <suppress files="StubWebApplicationContext\.java" checks="[a-zA-Z0-9]*"/>
+    <suppress files="TestRule\.java" checks="[a-zA-Z0-9]*"/>
+    <suppress files="Statement\.java" checks="[a-zA-Z0-9]*"/>
+</suppressions>
