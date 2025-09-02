@@ -63,7 +63,7 @@ import org.springframework.test.web.servlet.MockMvc;
 public class EndToEndHttpTest {
     @Autowired
     @SuppressWarnings("UnusedVariable")
-    private HttpAsserter httpAsserter;
+    protected HttpAsserter httpAsserter;
 
     @TestConfiguration
     public static class EndToEndHttpTestConfiguration {
