@@ -3,6 +3,8 @@ package io.github.finoid.testify.spring.type;
 import io.github.finoid.testify.snapshot.SnapshotterExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -31,6 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * </pre>
  */
 @Tag("IntegrationTest")
+@Execution(ExecutionMode.SAME_THREAD) // run sequentially
 @SpringBootTest
 @ExtendWith(SnapshotterExtension.class)
 public class IntegrationTest {

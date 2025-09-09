@@ -5,10 +5,18 @@ import au.com.origin.snapshots.SnapshotVerifier;
 import au.com.origin.snapshots.config.PropertyResolvingSnapshotConfig;
 import au.com.origin.snapshots.exceptions.SnapshotMatchException;
 import io.github.finoid.testify.core.type.UnitTest;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
 class SnapshotterUnitTest extends UnitTest {
+    private static final SnapshotVerifier SNAPSHOT_VERIFIER = new SnapshotVerifier(new PropertyResolvingSnapshotConfig(), SnapshotterUnitTest.class, true);
+
+    @AfterAll
+    static void afterAll() {
+        SNAPSHOT_VERIFIER.validateSnapshots();
+    }
+
     @Test
     void givenRecordInstanceToBeSerialized_whenJsonSnapshot_thenSuccessfulJsonSnapshotTaken(TestInfo testInfo) {
         var snapshotter = givenSnapshotVerifier(testInfo);
@@ -39,9 +47,7 @@ class SnapshotterUnitTest extends UnitTest {
     }
 
     private Snapshotter givenSnapshotVerifier(final TestInfo testInfo) {
-        final SnapshotVerifier verifier = new SnapshotVerifier(new PropertyResolvingSnapshotConfig(), getClass(), true);
-
-        final Expect expect = Expect.of(verifier, testInfo.getTestMethod()
+        final Expect expect = Expect.of(SNAPSHOT_VERIFIER, testInfo.getTestMethod()
             .orElseThrow(() -> new SnapshotMatchException("Unable to locate test method")));
 
         return new Snapshotter(expect);

@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * <pre>{@code
  * @RegisterExtension
- * static final PostgresContainerExtension postgres = MSSQLServerContainerExtension.create(
+ * static final PostgresContainerExtension postgres = PostgresContainerExtension.create(
  *    PostgresContainerExtension.Configuration.defaultConfiguration()
  *        .dockerImage(DockerImageName.parse("<docker repository proxy>/postgres:17-alpine")
  *            .asCompatibleSubstituteFor("postgres"))

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.finoid.testify.spring.http.HttpAsserter.HttpAsserterDsl;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -50,6 +52,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Tag("ApiTest")
 @AutoConfigureJsonTesters
 @SuppressWarnings({"SpringJavaInjectionPointsAutowiringInspection"})
+@Execution(ExecutionMode.CONCURRENT) // run in parallel
 @ExtendWith({SpringExtension.class, SnapshotExtension.class})
 @Import(ApiTest.ApiTestConfiguration.class)
 public class ApiTest {

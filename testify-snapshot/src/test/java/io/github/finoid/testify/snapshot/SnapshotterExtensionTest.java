@@ -2,11 +2,14 @@ package io.github.finoid.testify.snapshot;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
+@Execution(ExecutionMode.CONCURRENT) // run in parallel
 @ExtendWith(SnapshotterExtension.class)
 class SnapshotterExtensionTest {
     @Test
-    void givenSnapshotter_whenUserSnapshottedAsJson_thenSnapshotCreated(Snapshotter snapshotter) {
+    void givenSnapshotter_whenUserSnapshottedAsJson_thenSnapshotCreated(Snapshotter snapshotter) throws InterruptedException {
         snapshotter.json()
             .snapshot(new User(1, "John"));
     }
@@ -23,5 +26,6 @@ class SnapshotterExtensionTest {
             .snapshot(new User(1, "John"));
     }
 
-    record User(int id, String name) {}
+    record User(int id, String name) {
+    }
 }
