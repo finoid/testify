@@ -9,7 +9,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 @ExtendWith(SnapshotterExtension.class)
 class SnapshotterExtensionTest {
     @Test
-    void givenSnapshotter_whenUserSnapshottedAsJson_thenSnapshotCreated(Snapshotter snapshotter) throws InterruptedException {
+    void givenSnapshotter_whenUserSnapshottedAsJson_thenSnapshotCreated(Snapshotter snapshotter) {
         snapshotter.json()
             .snapshot(new User(1, "John"));
     }
