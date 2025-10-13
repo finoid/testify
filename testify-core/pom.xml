@@ -21,7 +21,7 @@
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <datafaker.version>2.5.1</datafaker.version>
+        <datafaker.version>2.5.2</datafaker.version>
         <java-snapshot-testing-junit5.version>4.0.8</java-snapshot-testing-junit5.version>
         <json-path.version>2.9.0</json-path.version>
         <spring-boot.version>3.5.4</spring-boot.version>
