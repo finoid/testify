@@ -5,6 +5,7 @@ import au.com.origin.snapshots.SnapshotVerifier;
 import au.com.origin.snapshots.config.PropertyResolvingSnapshotConfig;
 import au.com.origin.snapshots.exceptions.SnapshotMatchException;
 import au.com.origin.snapshots.utils.ReflectionUtils;
+import lombok.Value;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
@@ -14,13 +15,16 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
 import java.lang.reflect.Field;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.lang.reflect.Method;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * JUnit 5 extension that provides an instance of {@link Snapshotter} for parameter injection.
  */
 public class SnapshotterExtension implements ParameterResolver, BeforeAllCallback, AfterAllCallback, BeforeTestExecutionCallback {
-    private static final ExtensionContext.Namespace NS = ExtensionContext.Namespace.create("run-count");
+    private static final ExtensionContext.Namespace NS = ExtensionContext.Namespace.create("run-state");
+    private static final String KEY_STATE = "state";
 
     @SuppressWarnings("NullAway.Init")
     private SnapshotVerifier verifier;
@@ -37,16 +41,16 @@ public class SnapshotterExtension implements ParameterResolver, BeforeAllCallbac
 
     @Override
     public void afterAll(final ExtensionContext context) throws IllegalAccessException {
-        final AtomicInteger testMethodsExecuted = context.getRoot()
+        final State state = context.getRoot()
             .getStore(NS)
-            .getOrDefault("running", AtomicInteger.class, new AtomicInteger(0));
+            .getOrDefault(KEY_STATE, State.class, new State());
 
         // Brittle hack - upsource a fix or re-write SnapshotVerifier
         final Field field = ReflectionUtils.findFieldByPredicate(SnapshotVerifier.class, f -> f.getName().equalsIgnoreCase("failOnOrphans"))
             .orElseThrow(() -> new SnapshotMatchException("Unable to locate failOnOrphans field - please open a issue"));
         ReflectionUtils.makeAccessible(field);
 
-        if (testMethodsExecuted.get() > 1) {
+        if (state.getExecutedMethodCount() > 1) {
             field.set(verifier, true);
         } else {
             field.set(verifier, false);
@@ -60,9 +64,13 @@ public class SnapshotterExtension implements ParameterResolver, BeforeAllCallbac
         final ExtensionContext.Store store = context.getRoot()
             .getStore(NS);
 
-        final AtomicInteger counter = store.getOrComputeIfAbsent("running", k -> new AtomicInteger(), AtomicInteger.class);
+        final State state = store.getOrComputeIfAbsent(KEY_STATE, k -> new State(), State.class);
 
-        counter.incrementAndGet();
+        final String commonMethodName = context.getTestMethod()
+            .map(Method::getName)
+            .orElse("<unknown>");
+
+        state.addExecutedTestMethod(commonMethodName);
     }
 
     /**
@@ -82,5 +90,18 @@ public class SnapshotterExtension implements ParameterResolver, BeforeAllCallbac
             .orElseThrow(() -> new SnapshotMatchException("Unable to locate test method")));
 
         return new Snapshotter(expect);
+    }
+
+    @Value
+    private static class State {
+        Set<String> executedTestMethods = ConcurrentHashMap.newKeySet();
+
+        public void addExecutedTestMethod(final String testMethod) {
+            executedTestMethods.add(testMethod);
+        }
+
+        public int getExecutedMethodCount() {
+            return executedTestMethods.size();
+        }
     }
 }
