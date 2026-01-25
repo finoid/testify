@@ -18,6 +18,10 @@ testing, and more - enabling efficient test automation.
   beans from other Testify modules.
 * **testify-testcontainers** - Testcontainers support, including JUnit extensions for MsSqlServer.
 
+## Spring Boot suport
+
+The `0.11.x` releases support Spring Boot 3, while `0.12.x` and later support Spring Boot 4. 
+
 ## Examples
 
 ### [Snapshot tests](testify-snapshot/src/test/java/io/github/finoid/testify/snapshot/SnapshotterExtensionTest.java)

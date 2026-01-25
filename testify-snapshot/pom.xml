@@ -24,6 +24,7 @@
         <datafaker.version>2.4.3</datafaker.version>
         <java-snapshot-testing-junit5.version>4.0.8</java-snapshot-testing-junit5.version>
         <json-path.version>2.9.0</json-path.version>
+        <snapshot-testing.version>0.10.0</snapshot-testing.version>
     </properties>
 
     <dependencies>
@@ -55,14 +56,14 @@
             <artifactId>testify-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.origin-energy</groupId>
-            <artifactId>java-snapshot-testing-plugin-jackson</artifactId>
-            <version>${java-snapshot-testing-junit5.version}</version>
+            <groupId>io.github.finoid</groupId>
+            <artifactId>snapshot-testing-jackson2</artifactId>
+            <version>${snapshot-testing.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.origin-energy</groupId>
-            <artifactId>java-snapshot-testing-junit5</artifactId>
-            <version>${java-snapshot-testing-junit5.version}</version>
+            <groupId>io.github.finoid</groupId>
+            <artifactId>snapshot-testing-junit5</artifactId>
+            <version>${snapshot-testing.version}</version>
         </dependency>
         <dependency>
             <groupId>org.checkerframework</groupId>

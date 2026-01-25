@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.validation.Validator;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -154,11 +155,12 @@ public final class HttpAsserter {
         private ObjectMapper objectMapper = new ObjectMapper();
         @Nullable
         private Object controller;
-        private List<Object> controllerAdvices = Collections.emptyList();
+        private Collection<Object> controllerAdvices = Collections.emptyList();
         private FormattingConversionService conversionService = new DefaultFormattingConversionService();
+        private Collection<HandlerExceptionResolver> handlerExceptionResolvers = Collections.emptyList();
         private Validator validator = new ValidatorFactoryBean();
-        private List<Object> additionalBeans = Collections.emptyList();
-        private List<HttpMessageConverter<?>> httpMessageConverters = Collections.emptyList();
+        private Collection<Object> additionalBeans = Collections.emptyList();
+        private Collection<HttpMessageConverter<?>> httpMessageConverters = Collections.emptyList();
 
         private HttpAsserterDsl() {
         }
@@ -205,6 +207,18 @@ public final class HttpAsserter {
             return this;
         }
 
+        public HttpAsserterDsl handlerExceptionResolvers(final Collection<HandlerExceptionResolver> handlerExceptionResolvers) {
+            this.handlerExceptionResolvers = handlerExceptionResolvers;
+
+            return this;
+        }
+
+        public HttpAsserterDsl handlerExceptionResolvers(final HandlerExceptionResolver... handlerExceptionResolvers) {
+            this.handlerExceptionResolvers = List.of(handlerExceptionResolvers);
+
+            return this;
+        }
+
         public HttpAsserterDsl validator(final Validator validator) {
             this.validator = Precondition.nonNull(validator, "Validator must not be null");
 
@@ -229,10 +243,11 @@ public final class HttpAsserter {
         public HttpAsserter toHttpAsserter() {
             final MockMvcBuilder builder = (controller != null ? new MockMvcBuilder(controller) : new MockMvcBuilder())
                 .setMessageConverters(httpMessageConverters.toArray(HttpMessageConverter[]::new))
+                .setHandlerExceptionResolvers(handlerExceptionResolvers.toArray(HandlerExceptionResolver[]::new))
                 .setControllerAdvice(controllerAdvices.toArray(Object[]::new))
                 .setConversionService(conversionService)
                 .setValidator(validator)
-                .setAdditionalBeans(additionalBeans);
+                .setAdditionalBeans(List.copyOf(additionalBeans));
 
             return new HttpAsserter(builder.build(), objectMapper);
         }

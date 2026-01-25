@@ -1,7 +1,7 @@
 package io.github.finoid.testify.snapshot;
 
-import au.com.origin.snapshots.SnapshotVerifier;
-import au.com.origin.snapshots.exceptions.SnapshotMatchException;
+import io.github.finoid.snapshots.SnapshotVerifier;
+import io.github.finoid.snapshots.exceptions.SnapshotMatchException;
 import io.github.finoid.testify.core.type.UnitTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

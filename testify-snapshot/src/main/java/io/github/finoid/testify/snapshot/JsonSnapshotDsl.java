@@ -1,6 +1,6 @@
 package io.github.finoid.testify.snapshot;
 
-import au.com.origin.snapshots.Expect;
+import io.github.finoid.snapshots.Expect;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.github.finoid.testify.core.internal.Precondition;
 import io.github.finoid.testify.snapshot.SnapshotDsl.MaskingSnapshotDsl;
@@ -27,6 +27,7 @@ public class JsonSnapshotDsl extends MaskingSnapshotDsl {
     }
 
     @Override
+    @SuppressWarnings("NullAway")
     public <T> void snapshot(final T toBeSnapshotted) {
         expect.serializer(new JsonSnapshotSerializer(maskedFieldPaths, new SimpleModule())) // TODO (nw) option to pass a simple module?
             .scenario(scenario)
