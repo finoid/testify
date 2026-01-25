@@ -1,7 +1,7 @@
 package io.github.finoid.testify.snapshot;
 
-import au.com.origin.snapshots.Expect;
-import au.com.origin.snapshots.junit5.SnapshotExtension;
+import io.github.finoid.snapshots.Expect;
+import io.github.finoid.snapshots.junit5.SnapshotExtension;
 import lombok.RequiredArgsConstructor;
 
 /**

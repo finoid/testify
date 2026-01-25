@@ -1,10 +1,10 @@
 package io.github.finoid.testify.snapshot;
 
-import au.com.origin.snapshots.Expect;
-import au.com.origin.snapshots.SnapshotVerifier;
-import au.com.origin.snapshots.config.PropertyResolvingSnapshotConfig;
-import au.com.origin.snapshots.exceptions.SnapshotMatchException;
-import au.com.origin.snapshots.utils.ReflectionUtils;
+import io.github.finoid.snapshots.Expect;
+import io.github.finoid.snapshots.SnapshotVerifier;
+import io.github.finoid.snapshots.config.PropertyResolvingSnapshotConfig;
+import io.github.finoid.snapshots.exceptions.SnapshotMatchException;
+import io.github.finoid.snapshots.utils.ReflectionUtils;
 import lombok.Value;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
