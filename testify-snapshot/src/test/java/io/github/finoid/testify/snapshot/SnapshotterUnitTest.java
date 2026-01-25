@@ -1,9 +1,9 @@
 package io.github.finoid.testify.snapshot;
 
-import au.com.origin.snapshots.Expect;
-import au.com.origin.snapshots.SnapshotVerifier;
-import au.com.origin.snapshots.config.PropertyResolvingSnapshotConfig;
-import au.com.origin.snapshots.exceptions.SnapshotMatchException;
+import io.github.finoid.snapshots.Expect;
+import io.github.finoid.snapshots.SnapshotVerifier;
+import io.github.finoid.snapshots.config.PropertyResolvingSnapshotConfig;
+import io.github.finoid.snapshots.exceptions.SnapshotMatchException;
 import io.github.finoid.testify.core.type.UnitTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;

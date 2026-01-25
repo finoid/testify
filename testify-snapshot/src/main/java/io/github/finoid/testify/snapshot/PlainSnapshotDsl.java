@@ -1,7 +1,7 @@
 package io.github.finoid.testify.snapshot;
 
-import au.com.origin.snapshots.Expect;
-import au.com.origin.snapshots.serializers.v1.ToStringSnapshotSerializer;
+import io.github.finoid.snapshots.Expect;
+import io.github.finoid.snapshots.serializers.v1.ToStringSnapshotSerializer;
 import io.github.finoid.testify.core.internal.Precondition;
 import io.github.finoid.testify.snapshot.SnapshotDsl.ScenarioSnapshotDsl;
 

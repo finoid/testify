@@ -1,10 +1,10 @@
 package io.github.finoid.testify.snapshot;
 
-import au.com.origin.snapshots.Snapshot;
-import au.com.origin.snapshots.SnapshotSerializerContext;
-import au.com.origin.snapshots.exceptions.SnapshotExtensionException;
-import au.com.origin.snapshots.serializers.SerializerType;
-import au.com.origin.snapshots.serializers.SnapshotSerializer;
+import io.github.finoid.snapshots.Snapshot;
+import io.github.finoid.snapshots.SnapshotSerializerContext;
+import io.github.finoid.snapshots.exceptions.SnapshotExtensionException;
+import io.github.finoid.snapshots.serializers.SerializerType;
+import io.github.finoid.snapshots.serializers.SnapshotSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.PrettyPrinter;
