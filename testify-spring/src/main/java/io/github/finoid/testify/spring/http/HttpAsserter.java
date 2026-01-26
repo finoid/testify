@@ -1,8 +1,5 @@
 package io.github.finoid.testify.spring.http;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.finoid.testify.core.internal.Precondition;
 import io.github.finoid.testify.spring.http.HttpAsserter.ExpectSpec.ExpectDsl;
 import io.github.finoid.testify.spring.http.servlet.MockMvcBuilder;
@@ -11,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.Value;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
@@ -28,6 +24,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.validation.Validator;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -135,7 +133,6 @@ public final class HttpAsserter {
         );
     }
 
-    @SneakyThrows(JsonProcessingException.class)
     private <I> String writeValueAsString(@org.jspecify.annotations.Nullable final I request) {
         if (request == null) {
             return "";
@@ -532,7 +529,7 @@ public final class HttpAsserter {
             String url;
             HttpMethod httpMethod = HttpMethod.GET;
             @SuppressWarnings("deprecation")
-            Set<MediaType> acceptTypes = Set.of(MediaType.APPLICATION_JSON_UTF8);
+            Set<MediaType> acceptTypes = Set.of(MediaType.APPLICATION_JSON);
             MediaType contentType = MediaType.APPLICATION_JSON;
             HttpHeaders httpHeaders = new HttpHeaders();
             @Nullable

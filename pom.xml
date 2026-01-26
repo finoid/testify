@@ -35,11 +35,10 @@
         <!-- This revision id (version) is overridden on deploy, so this revision number is only applicable for local usage -->
         <revision>0.10.0</revision>
 
-        <spring-boot.version>3.5.6</spring-boot.version>
+        <spring-boot.version>4.0.2</spring-boot.version>
 
         <code-quality.feature.enabled>true</code-quality.feature.enabled>
-        <code-quality.configuration.checkstyle.suppression-location>checkstyle/checkstyle-suppressions.xml
-        </code-quality.configuration.checkstyle.suppression-location>
+        <code-quality.configuration.checkstyle.suppression-location>checkstyle/checkstyle-suppressions.xml</code-quality.configuration.checkstyle.suppression-location>
     </properties>
 
     <modules>

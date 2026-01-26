@@ -1,6 +1,5 @@
 package io.github.finoid.testify.spring.type;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import io.github.finoid.testify.spring.http.HttpAsserter;
 import io.github.finoid.testify.spring.http.HttpAsserter.RequestSpec;
 import org.junit.jupiter.api.Assertions;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tools.jackson.core.type.TypeReference;
 
 class CustomApiTest extends ApiTest {
     @Autowired

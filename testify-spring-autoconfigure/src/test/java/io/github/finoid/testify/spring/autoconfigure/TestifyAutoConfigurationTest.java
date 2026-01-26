@@ -1,6 +1,5 @@
 package io.github.finoid.testify.spring.autoconfigure;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.finoid.testify.spring.http.HttpAsserter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -9,6 +8,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

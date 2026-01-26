@@ -13,11 +13,12 @@ import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.web.servlet.setup.AbstractMockMvcBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
+import org.springframework.util.PathMatcher;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.StringValueResolver;
 import org.springframework.validation.Validator;
+import org.springframework.web.accept.ApiVersionStrategy;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
@@ -61,8 +62,7 @@ import java.util.function.Supplier;
 public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuilder> {
     private final List<Object> controllers;
 
-    @Nullable
-    private List<Object> controllerAdvice;
+    private @Nullable List<Object> controllerAdvice;
 
     private List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
 
@@ -72,40 +72,29 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
 
     private final List<MappedInterceptor> mappedInterceptors = new ArrayList<>();
 
-    @Nullable
-    private Validator validator;
+    private @Nullable Validator validator;
 
-    @Nullable
-    private ContentNegotiationManager contentNegotiationManager;
+    private @Nullable ContentNegotiationManager contentNegotiationManager;
 
-    @Nullable
-    private FormattingConversionService conversionService;
+    private @Nullable FormattingConversionService conversionService;
 
-    @Nullable
-    private List<HandlerExceptionResolver> handlerExceptionResolvers;
+    private @Nullable ApiVersionStrategy versionStrategy;
 
-    @Nullable
-    private Long asyncRequestTimeout;
+    private @Nullable List<HandlerExceptionResolver> handlerExceptionResolvers;
 
-    @Nullable
-    private List<ViewResolver> viewResolvers;
+    private @Nullable Long asyncRequestTimeout;
+
+    private @Nullable List<ViewResolver> viewResolvers;
 
     private LocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
 
-    @Nullable
-    private FlashMapManager flashMapManager;
+    private @Nullable FlashMapManager flashMapManager;
 
     private boolean preferPathMatcher = false;
 
-    @Nullable
-    private PathPatternParser patternParser;
+    private @Nullable PathPatternParser patternParser;
 
-    private boolean useSuffixPatternMatch = false;
-
-    private boolean useTrailingSlashPatternMatch = true;
-
-    @Nullable
-    private Boolean removeSemicolonContent;
+    private @Nullable Boolean removeSemicolonContent;
 
     private final Map<String, String> placeholderValues = new HashMap<>();
 
@@ -116,7 +105,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
     /**
      * Protected constructor. Not intended for direct instantiation.
      *
-     * @see MockMvcBuilders#standaloneSetup(Object...)
+     * @see org.springframework.test.web.servlet.setup.MockMvcBuilders#standaloneSetup(Object...)
      */
     public MockMvcBuilder(Object... controllers) {
         this.controllers = instantiateIfNecessary(controllers);
@@ -139,7 +128,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      *
      * @since 4.2
      */
-    public MockMvcBuilder setControllerAdvice(Object... controllerAdvice) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setControllerAdvice(Object... controllerAdvice) {
         this.controllerAdvice = instantiateIfNecessary(controllerAdvice);
         return this;
     }
@@ -150,7 +139,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      * and response. If no message converters are added to the list, a default
      * list of converters is added instead.
      */
-    public MockMvcBuilder setMessageConverters(HttpMessageConverter<?>... messageConverters) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setMessageConverters(HttpMessageConverter<?>... messageConverters) {
         this.messageConverters = Arrays.asList(messageConverters);
         return this;
     }
@@ -160,7 +149,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      * The default implementation used, assuming JSR-303 is on the classpath, is
      * {@link org.springframework.validation.beanvalidation.LocalValidatorFactoryBean}.
      */
-    public MockMvcBuilder setValidator(Validator validator) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setValidator(Validator validator) {
         this.validator = validator;
         return this;
     }
@@ -169,15 +158,25 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      * Provide a conversion service with custom formatters and converters.
      * If not set, a {@link DefaultFormattingConversionService} is used by default.
      */
-    public MockMvcBuilder setConversionService(FormattingConversionService conversionService) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setConversionService(FormattingConversionService conversionService) {
         this.conversionService = conversionService;
+        return this;
+    }
+
+    /**
+     * Set the {@link ApiVersionStrategy} to use when mapping requests.
+     *
+     * @since 7.0
+     */
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setApiVersionStrategy(@Nullable ApiVersionStrategy versionStrategy) {
+        this.versionStrategy = versionStrategy;
         return this;
     }
 
     /**
      * Add interceptors mapped to all incoming requests.
      */
-    public MockMvcBuilder addInterceptors(HandlerInterceptor... interceptors) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder addInterceptors(HandlerInterceptor... interceptors) {
         addMappedInterceptors(null, interceptors);
         return this;
     }
@@ -185,8 +184,8 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
     /**
      * Add interceptors mapped to a set of path patterns.
      */
-    public MockMvcBuilder addMappedInterceptors(
-        @Nullable String[] pathPatterns, HandlerInterceptor... interceptors) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder addMappedInterceptors(
+        String @Nullable [] pathPatterns, HandlerInterceptor... interceptors) {
 
         for (HandlerInterceptor interceptor : interceptors) {
             this.mappedInterceptors.add(new MappedInterceptor(pathPatterns, null, interceptor));
@@ -197,7 +196,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
     /**
      * Set a ContentNegotiationManager.
      */
-    public MockMvcBuilder setContentNegotiationManager(ContentNegotiationManager manager) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setContentNegotiationManager(ContentNegotiationManager manager) {
         this.contentNegotiationManager = manager;
         return this;
     }
@@ -209,7 +208,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      *
      * @param timeout the timeout value in milliseconds
      */
-    public MockMvcBuilder setAsyncRequestTimeout(long timeout) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setAsyncRequestTimeout(long timeout) {
         this.asyncRequestTimeout = timeout;
         return this;
     }
@@ -217,7 +216,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
     /**
      * Provide custom resolvers for controller method arguments.
      */
-    public MockMvcBuilder setCustomArgumentResolvers(HandlerMethodArgumentResolver... argumentResolvers) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setCustomArgumentResolvers(HandlerMethodArgumentResolver... argumentResolvers) {
         this.customArgumentResolvers = Arrays.asList(argumentResolvers);
         return this;
     }
@@ -225,7 +224,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
     /**
      * Provide custom handlers for controller method return values.
      */
-    public MockMvcBuilder setCustomReturnValueHandlers(HandlerMethodReturnValueHandler... handlers) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setCustomReturnValueHandlers(HandlerMethodReturnValueHandler... handlers) {
         this.customReturnValueHandlers = Arrays.asList(handlers);
         return this;
     }
@@ -233,7 +232,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
     /**
      * Set the HandlerExceptionResolver types to use as a list.
      */
-    public MockMvcBuilder setHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
         this.handlerExceptionResolvers = exceptionResolvers;
         return this;
     }
@@ -241,7 +240,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
     /**
      * Set the HandlerExceptionResolver types to use as an array.
      */
-    public MockMvcBuilder setHandlerExceptionResolvers(HandlerExceptionResolver... exceptionResolvers) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setHandlerExceptionResolvers(HandlerExceptionResolver... exceptionResolvers) {
         this.handlerExceptionResolvers = Arrays.asList(exceptionResolvers);
         return this;
     }
@@ -250,7 +249,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      * Set up view resolution with the given {@link ViewResolver ViewResolvers}.
      * If not set, an {@link InternalResourceViewResolver} is used by default.
      */
-    public MockMvcBuilder setViewResolvers(ViewResolver... resolvers) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setViewResolvers(ViewResolver... resolvers) {
         this.viewResolvers = Arrays.asList(resolvers);
         return this;
     }
@@ -258,10 +257,10 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
     /**
      * Sets up a single {@link ViewResolver} that always returns the provided
      * view instance. This is a convenient shortcut if you need to use one
-     * View instance only -- e.g. rendering generated content (JSON, XML, Atom).
+     * View instance only -- for example, rendering generated content (JSON, XML, Atom).
      */
-    public MockMvcBuilder setSingleView(View view) {
-        this.viewResolvers = Collections.<ViewResolver>singletonList(new StaticViewResolver(view));
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setSingleView(View view) {
+        this.viewResolvers = Collections.<ViewResolver>singletonList(new io.github.finoid.testify.spring.http.servlet.MockMvcBuilder.StaticViewResolver(view));
         return this;
     }
 
@@ -269,7 +268,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      * Provide a LocaleResolver instance.
      * If not provided, the default one used is {@link AcceptHeaderLocaleResolver}.
      */
-    public MockMvcBuilder setLocaleResolver(LocaleResolver localeResolver) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setLocaleResolver(LocaleResolver localeResolver) {
         this.localeResolver = localeResolver;
         return this;
     }
@@ -278,48 +277,22 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      * Provide a custom FlashMapManager instance.
      * If not provided, {@code SessionFlashMapManager} is used by default.
      */
-    public MockMvcBuilder setFlashMapManager(FlashMapManager flashMapManager) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setFlashMapManager(FlashMapManager flashMapManager) {
         this.flashMapManager = flashMapManager;
         return this;
     }
 
     /**
-     * Enable URL path matching with parsed
-     * {@link org.springframework.web.util.pattern.PathPattern PathPatterns}
-     * instead of String pattern matching with a {@link org.springframework.util.PathMatcher}.
+     * Configure the parser to use for
+     * {@link org.springframework.web.util.pattern.PathPattern PathPatterns}.
+     * <p>By default, this is a default instance of {@link PathPatternParser}.
      *
      * @param parser the parser to use
      * @since 5.3
      */
-    public MockMvcBuilder setPatternParser(@Nullable PathPatternParser parser) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setPatternParser(@Nullable PathPatternParser parser) {
         this.patternParser = parser;
         this.preferPathMatcher = (this.patternParser == null);
-        return this;
-    }
-
-    /**
-     * Whether to use suffix pattern match (".*") when matching patterns to
-     * requests. If enabled a method mapped to "/users" also matches to "/users.*".
-     * <p>The default value is {@code false}.
-     *
-     * @deprecated as of 5.2.4. See class-level note in {@link RequestMappingHandlerMapping} on the deprecation of path extension config options
-     */
-    @Deprecated
-    public MockMvcBuilder setUseSuffixPatternMatch(boolean useSuffixPatternMatch) {
-        this.useSuffixPatternMatch = useSuffixPatternMatch;
-        this.preferPathMatcher |= useSuffixPatternMatch;
-        return this;
-    }
-
-    /**
-     * Whether to match to URLs irrespective of the presence of a trailing slash.
-     * If enabled a method mapped to "/users" also matches to "/users/".
-     *
-     * @deprecated as of 6.0, see {@link PathPatternParser#setMatchOptionalTrailingSeparator(boolean)}
-     */
-    @Deprecated(since = "6.0")
-    public MockMvcBuilder setUseTrailingSlashPatternMatch(boolean useTrailingSlashPatternMatch) {
-        this.useTrailingSlashPatternMatch = useTrailingSlashPatternMatch;
         return this;
     }
 
@@ -327,8 +300,13 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      * Set if ";" (semicolon) content should be stripped from the request URI. The value,
      * if provided, is in turn set on
      * {@link org.springframework.web.util.UrlPathHelper#setRemoveSemicolonContent(boolean)}.
+     *
+     * @deprecated use of {@link PathMatcher} and {@link UrlPathHelper} is deprecated
+     * for use at runtime in web modules in favor of parsed patterns with
+     * {@link PathPatternParser}.
      */
-    public MockMvcBuilder setRemoveSemicolonContent(boolean removeSemicolonContent) {
+    @Deprecated(since = "7.0", forRemoval = true)
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setRemoveSemicolonContent(boolean removeSemicolonContent) {
         this.removeSemicolonContent = removeSemicolonContent;
         return this;
     }
@@ -341,7 +319,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      *
      * @since 4.2.8
      */
-    public MockMvcBuilder addPlaceholderValue(String name, String value) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder addPlaceholderValue(String name, String value) {
         this.placeholderValues.put(name, value);
         return this;
     }
@@ -352,7 +330,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      * @param factory the factory
      * @since 5.0
      */
-    public MockMvcBuilder setCustomHandlerMapping(Supplier<RequestMappingHandlerMapping> factory) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setCustomHandlerMapping(Supplier<RequestMappingHandlerMapping> factory) {
         this.handlerMappingFactory = factory;
         return this;
     }
@@ -363,7 +341,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      * @param additionalBeans the list of additional beans
      * @since 5.0
      */
-    public MockMvcBuilder setAdditionalBeans(List<Object> additionalBeans) {
+    public io.github.finoid.testify.spring.http.servlet.MockMvcBuilder setAdditionalBeans(List<Object> additionalBeans) {
         this.additionalBeans = additionalBeans;
         return this;
     }
@@ -379,7 +357,8 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
 
     @SuppressWarnings("deprecation")
     private void registerMvcSingletons(StubWebApplicationContext wac) {
-        StandaloneConfiguration config = new StandaloneConfiguration();
+        io.github.finoid.testify.spring.http.servlet.MockMvcBuilder.StandaloneConfiguration
+            config = new io.github.finoid.testify.spring.http.servlet.MockMvcBuilder.StandaloneConfiguration();
         config.setApplicationContext(wac);
 
         wac.addBeans(this.controllers);
@@ -422,8 +401,6 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
 
         wac.addBeans(initViewResolvers(wac));
         wac.addBean(DispatcherServlet.LOCALE_RESOLVER_BEAN_NAME, this.localeResolver);
-        wac.addBean(DispatcherServlet.THEME_RESOLVER_BEAN_NAME,
-            new org.springframework.web.servlet.theme.FixedThemeResolver());
         wac.addBean(DispatcherServlet.REQUEST_TO_VIEW_NAME_TRANSLATOR_BEAN_NAME,
             new DefaultRequestToViewNameTranslator());
 
@@ -461,21 +438,22 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
         return Collections.emptyMap();
     }
 
+
     /**
      * Using the MVC Java configuration as the starting point for the "standalone" setup.
      */
     private class StandaloneConfiguration extends WebMvcConfigurationSupport {
 
-        @SuppressWarnings("deprecation")
+        @SuppressWarnings("removal")
         public RequestMappingHandlerMapping getHandlerMapping(
             FormattingConversionService mvcConversionService,
             ResourceUrlProvider mvcResourceUrlProvider) {
 
             RequestMappingHandlerMapping handlerMapping = handlerMappingFactory.get();
-            handlerMapping.setEmbeddedValueResolver(new StaticStringValueResolver(placeholderValues));
+            handlerMapping.setEmbeddedValueResolver(
+                new io.github.finoid.testify.spring.http.servlet.MockMvcBuilder.StaticStringValueResolver(placeholderValues));
             if (patternParser == null && preferPathMatcher) {
                 handlerMapping.setPatternParser(null);
-                handlerMapping.setUseSuffixPatternMatch(useSuffixPatternMatch);
                 if (removeSemicolonContent != null) {
                     UrlPathHelper pathHelper = new UrlPathHelper();
                     pathHelper.setRemoveSemicolonContent(removeSemicolonContent);
@@ -484,13 +462,16 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
             } else if (patternParser != null) {
                 handlerMapping.setPatternParser(patternParser);
             }
-            handlerMapping.setUseTrailingSlashMatch(useTrailingSlashPatternMatch);
+            if (versionStrategy != null) {
+                handlerMapping.setApiVersionStrategy(versionStrategy);
+            }
             handlerMapping.setOrder(0);
             handlerMapping.setInterceptors(getInterceptors(mvcConversionService, mvcResourceUrlProvider));
             return handlerMapping;
         }
 
         @Override
+        @SuppressWarnings("removal")
         protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
             converters.addAll(messageConverters);
         }
@@ -589,19 +570,15 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
         }
     }
 
-    /**
-     * A {@link ViewResolver} that always returns same View.
-     */
     private static class StaticViewResolver implements ViewResolver {
         private final View view;
 
-        public StaticViewResolver(View view) {
+        public StaticViewResolver(final View view) {
             this.view = view;
         }
 
         @Override
-        @Nullable
-        public View resolveViewName(String viewName, Locale locale) {
+        public @Nullable View resolveViewName(final String viewName, final Locale locale) {
             return this.view;
         }
     }

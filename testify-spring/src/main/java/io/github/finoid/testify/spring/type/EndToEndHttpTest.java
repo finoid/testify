@@ -1,6 +1,5 @@
 package io.github.finoid.testify.spring.type;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.finoid.testify.snapshot.SnapshotterExtension;
 import io.github.finoid.testify.spring.http.HttpAsserter;
 import org.junit.jupiter.api.Tag;
@@ -8,12 +7,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Base test class for E2E-related tests, providing utility methods for HTTP assertions and component setup.

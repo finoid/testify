@@ -22,23 +22,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <datafaker.version>2.4.3</datafaker.version>
-        <java-snapshot-testing-junit5.version>4.0.8</java-snapshot-testing-junit5.version>
         <json-path.version>2.9.0</json-path.version>
         <snapshot-testing.version>0.10.0</snapshot-testing.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
         </dependency>
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
@@ -57,12 +52,12 @@
         </dependency>
         <dependency>
             <groupId>io.github.finoid</groupId>
-            <artifactId>snapshot-testing-jackson2</artifactId>
+            <artifactId>snapshot-testing-jackson3</artifactId>
             <version>${snapshot-testing.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.finoid</groupId>
-            <artifactId>snapshot-testing-junit5</artifactId>
+            <artifactId>snapshot-testing-junit6</artifactId>
             <version>${snapshot-testing.version}</version>
         </dependency>
         <dependency>

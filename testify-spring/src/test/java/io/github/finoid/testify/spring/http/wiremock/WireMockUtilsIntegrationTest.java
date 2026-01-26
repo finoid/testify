@@ -9,10 +9,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
-import org.springframework.boot.autoconfigure.http.codec.CodecsAutoConfiguration;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration;
+import org.springframework.boot.http.converter.autoconfigure.HttpMessageConvertersAutoConfiguration;
+import org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration;
+import org.springframework.boot.restclient.autoconfigure.RestClientAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,7 +20,7 @@ import org.springframework.web.client.RestClient;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
-@ContextConfiguration(classes = {JacksonAutoConfiguration.class, CodecsAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class,
+@ContextConfiguration(classes = {JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class,
     RestClientAutoConfiguration.class, WireMockUtilsIntegrationTest.CustomTestConfiguration.class})
 class WireMockUtilsIntegrationTest extends IntegrationTest {
     @RegisterExtension

@@ -1,9 +1,9 @@
 package io.github.finoid.testify.snapshot;
 
 import io.github.finoid.snapshots.Expect;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.github.finoid.testify.core.internal.Precondition;
 import io.github.finoid.testify.snapshot.SnapshotDsl.MaskingSnapshotDsl;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * A DSL for snapshotting JSON objects with optional masking of fields.
@@ -29,6 +29,7 @@ public class JsonSnapshotDsl extends MaskingSnapshotDsl {
     @Override
     @SuppressWarnings("NullAway")
     public <T> void snapshot(final T toBeSnapshotted) {
+        // TODO (nw) use the JsonSnapshotSerializer from java-snapshot-testing instead?
         expect.serializer(new JsonSnapshotSerializer(maskedFieldPaths, new SimpleModule())) // TODO (nw) option to pass a simple module?
             .scenario(scenario)
             .toMatchSnapshot(toBeSnapshotted);

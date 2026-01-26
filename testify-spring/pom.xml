@@ -39,11 +39,19 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient-test</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wiremock</groupId>
@@ -51,4 +59,86 @@
             <version>${wiremock-standalone.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>extra-enforcer-rules</artifactId>
+                        <version>${extra-enforcer-rules.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <banCircularDependencies/>
+                                <banDuplicateClasses>
+                                    <findAllDuplicates>true</findAllDuplicates>
+                                    <ignoreClasses>
+                                        <ignoreClass>module-info</ignoreClass>
+                                        <!-- Ignored due to shadowed classes in wiremock-standalone -->
+                                        <ignoreClass>org/jspecify/annotations/NullMarked</ignoreClass>
+                                        <ignoreClass>org/jspecify/annotations/NullUnmarked</ignoreClass>
+                                        <ignoreClass>org/jspecify/annotations/Nullable</ignoreClass>
+                                        <ignoreClass>org/jspecify/annotations/NonNull</ignoreClass>
+                                    </ignoreClasses>
+                                    <ignoreWhenIdentical>true</ignoreWhenIdentical>
+                                </banDuplicateClasses>
+                                <banDuplicatePomDependencyVersions/>
+                                <!-- https://maven.apache.org/enforcer/enforcer-rules/bannedPlugins.html -->
+                                <bannedPlugins>
+                                    <level>WARN</level>
+                                    <excludes>
+                                        <exclude>org.apache.maven.plugins:maven-verifier-plugin</exclude>
+                                    </excludes>
+                                    <message>Please consider using the maven-invoker-plugin
+                                        (http://maven.apache.org/plugins/maven-invoker-plugin/)!
+                                    </message>
+                                </bannedPlugins>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>log4j:log4j</exclude>
+                                        <!-- Ban vulnerable versions -->
+                                        <exclude>log4j:log4j:[,2.15.0)</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                                <!-- https://maven.apache.org/enforcer/enforcer-rules/dependencyConvergence.html -->
+                                <dependencyConvergence/>
+                                <requireEnvironmentVariable>
+                                    <variableName>JAVA_HOME</variableName>
+                                </requireEnvironmentVariable>
+                                <requireJavaVersion>
+                                    <version>[17,)</version>
+                                    <message>Java 17 or higher is required</message>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>${maven.minimum.version}</version>
+                                </requireMavenVersion>
+                                <requireProperty>
+                                    <property>project.version</property>
+                                    <property>java.version</property>
+                                    <message>You must set the ${property} property!</message>
+                                </requireProperty>
+                                <!-- https://maven.apache.org/enforcer/enforcer-rules/requireReleaseDeps.html -->
+                                <requireReleaseDeps>
+                                    <message>No Snapshots allowed</message>
+                                    <onlyWhenRelease>true</onlyWhenRelease>
+                                </requireReleaseDeps>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
