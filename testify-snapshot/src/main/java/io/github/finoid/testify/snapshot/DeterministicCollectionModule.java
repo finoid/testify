@@ -1,14 +1,13 @@
 package io.github.finoid.testify.snapshot;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.Nullable;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.module.SimpleModule;
 
-import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -30,21 +29,24 @@ public class DeterministicCollectionModule extends SimpleModule {
     /**
      * Collections get converted into a sorted Object[].  This then gets serialized using the default Array serializer.
      */
-    @SuppressWarnings("rawtypes")
-    private static class CollectionSerializer extends JsonSerializer<Collection> {
+    private static class CollectionSerializer<T> extends ValueSerializer<Collection<T>> {
         /**
          * Serializes a {@link Collection} into a sorted {@code Object[]} for deterministic output.
          *
-         * @param value       the collection to be serialized
-         * @param gen         the JSON generator
-         * @param serializers the serializer provider
-         * @throws IOException if an error occurs during serialization
+         * @param value the collection to be serialized
+         * @param gen   the JSON generator
+         * @param ctxt  the serialization context
          */
         @Override
-        public void serialize(final Collection value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
-            final Object[] sorted = convert(value);
+        public void serialize(final Collection value, final tools.jackson.core.JsonGenerator gen, final SerializationContext ctxt)
+            throws JacksonException {
+            Object[] sorted = convert(value);
 
-            serializers.defaultSerializeValue(sorted, gen);
+            if (value == null) {
+                ctxt.getDefaultNullValueSerializer().serialize(null, gen, ctxt);
+            } else {
+                ctxt.findTypedValueSerializer(Object[].class, true).serialize(sorted, gen, ctxt);
+            }
         }
 
         /**
@@ -53,9 +55,9 @@ public class DeterministicCollectionModule extends SimpleModule {
          * @param value the collection to be converted
          * @return a sorted array or an unsorted array if sorting fails
          */
-        private static Object[] convert(@Nullable final Collection<?> value) {
+        private Object[] convert(final Collection<?> value) {
             if (value == null || value.isEmpty()) {
-                return new Object[0];
+                return Collections.emptyList().toArray();
             }
 
             try {
@@ -63,11 +65,11 @@ public class DeterministicCollectionModule extends SimpleModule {
                     .filter(Objects::nonNull)
                     .sorted()
                     .toArray();
-            } catch (final ClassCastException ex) {
-                log.warn("Sorting failed for collection of type: {}. Example contents: {}.\n"
-                        + "Consider adding a custom serializer or comparator.", value.getClass().getSimpleName(),
-                    value.stream().limit(3).toList());
-
+            } catch (ClassCastException ex) {
+                log.warn(
+                    "Unable to sort() collection - this may result in a non deterministic snapshot.\n"
+                        + "Consider adding a custom serializer for this type via the JacksonSnapshotSerializer#configure() method.\n"
+                        + ex.getMessage());
                 return value.toArray();
             }
         }

@@ -64,7 +64,7 @@ public class SnapshotterExtension implements ParameterResolver, BeforeAllCallbac
         final ExtensionContext.Store store = context.getRoot()
             .getStore(NS);
 
-        final State state = store.getOrComputeIfAbsent(KEY_STATE, k -> new State(), State.class);
+        final State state = store.computeIfAbsent(KEY_STATE, k -> new State(), State.class);
 
         final String commonMethodName = context.getTestMethod()
             .map(Method::getName)

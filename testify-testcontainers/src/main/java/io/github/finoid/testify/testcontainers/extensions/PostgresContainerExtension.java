@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.Map;
@@ -29,12 +29,12 @@ import java.util.Map;
  *        .reuse(true)
  *    );
  * };
- *}</pre>
+ * }</pre>
  */
 public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCallback {
     private final Configuration configuration;
     @Nullable
-    private volatile PostgreSQLContainer<?> container;
+    private volatile PostgreSQLContainer container;
 
     private PostgresContainerExtension() {
         this(Configuration.defaultConfiguration());
@@ -52,7 +52,6 @@ public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCa
      * @param context The context in which the given test is executed.
      */
     @Override
-    @SuppressWarnings("resource")
     public void beforeAll(final ExtensionContext context) {
         if (container != null && container.isRunning()) {
             return; // Already started
@@ -61,7 +60,7 @@ public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCa
         synchronized (this) {
             if (container == null) {
                 this.container =
-                    new PostgreSQLContainer<>(configuration.dockerImage)
+                    new PostgreSQLContainer(configuration.dockerImage)
                         .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
                             HostConfig.newHostConfig()
                                 .withPortBindings(
@@ -78,7 +77,7 @@ public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCa
     @Override
     public void afterAll(final ExtensionContext context) {
         // Stop only if not reusing, otherwise keep the container for performance purpose
-        final PostgreSQLContainer<?> container = this.container;
+        final PostgreSQLContainer container = this.container;
         if (container != null && container.isRunning() && !configuration.reuse) {
             container.stop();
         }
@@ -92,7 +91,7 @@ public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCa
      */
     @SuppressWarnings("resource")
     public String getHost() {
-        final PostgreSQLContainer<?> container = ensureInitialized();
+        final PostgreSQLContainer container = ensureInitialized();
 
         return container.getHost();
     }
@@ -105,7 +104,7 @@ public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCa
      */
     @SuppressWarnings("resource")
     public int getPort() {
-        final PostgreSQLContainer<?> container = ensureInitialized();
+        final PostgreSQLContainer container = ensureInitialized();
 
         return container.getFirstMappedPort();
     }
@@ -118,7 +117,7 @@ public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCa
      */
     @SuppressWarnings("resource")
     public String getJdbcUrl() {
-        final PostgreSQLContainer<?> container = ensureInitialized();
+        final PostgreSQLContainer container = ensureInitialized();
 
         return container.getJdbcUrl();
     }
@@ -131,7 +130,7 @@ public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCa
      */
     @SuppressWarnings("resource")
     public String getUsername() {
-        final PostgreSQLContainer<?> container = ensureInitialized();
+        final PostgreSQLContainer container = ensureInitialized();
 
         return container.getUsername();
     }
@@ -143,7 +142,7 @@ public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCa
      */
     @SuppressWarnings("resource")
     public String getPassword() {
-        final PostgreSQLContainer<?> container = ensureInitialized();
+        final PostgreSQLContainer container = ensureInitialized();
 
         return container.getPassword();
     }
@@ -195,8 +194,8 @@ public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCa
         return new PostgresContainerExtension(configuration);
     }
 
-    private PostgreSQLContainer<?> ensureInitialized() {
-        final PostgreSQLContainer<?> container = this.container;
+    private PostgreSQLContainer ensureInitialized() {
+        final PostgreSQLContainer container = this.container;
         if (container == null) {
             throw new IllegalStateException("PostgreSQLContainer is not created yet. Did you register the extension and let it start?");
         }

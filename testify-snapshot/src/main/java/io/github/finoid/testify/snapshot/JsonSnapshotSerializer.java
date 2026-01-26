@@ -1,24 +1,25 @@
 package io.github.finoid.testify.snapshot;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.JsonPathException;
 import io.github.finoid.snapshots.Snapshot;
 import io.github.finoid.snapshots.SnapshotSerializerContext;
 import io.github.finoid.snapshots.exceptions.SnapshotExtensionException;
 import io.github.finoid.snapshots.serializers.SerializerType;
 import io.github.finoid.snapshots.serializers.SnapshotSerializer;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.PrettyPrinter;
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.JsonPathException;
 import io.github.finoid.testify.core.internal.Precondition;
+import tools.jackson.core.util.DefaultIndenter;
+import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.core.util.Separators;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +40,6 @@ import java.util.List;
 public class JsonSnapshotSerializer implements SnapshotSerializer {
     private final List<String> maskedFieldPaths;
     private final ObjectMapper objectMapper;
-    private final PrettyPrinter prettyPrinter = new SnapshotPrettyPrinter();
 
     /**
      * Creates a new {@code JsonSnapshotSerializer} with a list of masked fields.
@@ -75,7 +75,7 @@ public class JsonSnapshotSerializer implements SnapshotSerializer {
         try {
             final List<?> objects = Collections.singletonList(object);
 
-            final String body = objectMapper.writer(this.prettyPrinter)
+            final String body = objectMapper.writerWithDefaultPrettyPrinter()
                 .writeValueAsString(objects);
 
             final DocumentContext documentContext = JsonPath.parse(body);
@@ -103,32 +103,27 @@ public class JsonSnapshotSerializer implements SnapshotSerializer {
         return SerializerType.JSON.name();
     }
 
-    @SuppressWarnings("deprecation")
     private static ObjectMapper createObjectMapper(final SimpleModule simpleModule) {
-        final ObjectMapper mapper = new ObjectMapper();
+        final JsonMapper.Builder builder =
+            JsonMapper.builder()
+                .defaultPrettyPrinter(new SnapshotPrettyPrinter())
+                .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+                .enable(DateTimeFeature.WRITE_DATES_WITH_ZONE_ID)
+                .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .findAndAddModules()
+                .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL))
+                .changeDefaultVisibility(visibility ->
+                    visibility.withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+                        .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+                        .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+                        .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
 
-        mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-        mapper.enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
-        mapper.enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
+        builder.addModule(simpleModule);
+        builder.addModule(new DeterministicCollectionModule()); // TODO (nw) use the one from java-snapshot-testing
 
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        mapper.findAndRegisterModules();
-        mapper.registerModule(simpleModule);
-        mapper.registerModule(new DeterministicCollectionModule());
-
-        mapper.setVisibility(
-            mapper.getSerializationConfig().getDefaultVisibilityChecker()
-                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE)
-                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
-        );
-
-        return mapper;
+        return builder.build();
     }
 
     /**
@@ -142,13 +137,13 @@ public class JsonSnapshotSerializer implements SnapshotSerializer {
      * </p>
      */
     private static class SnapshotPrettyPrinter extends DefaultPrettyPrinter {
-        public SnapshotPrettyPrinter() {
-            final Indenter lfOnlyIndenter = new DefaultIndenter("  ", "\n");
-            this.indentArraysWith(lfOnlyIndenter);
-            this.indentObjectsWith(lfOnlyIndenter);
+        private static final DefaultPrettyPrinter.Indenter LF_ONLY_INDENTER = new DefaultIndenter("  ", "\n");
+        private static final Separators DEFAULT_SEPARATORS = Separators.createDefaultInstance().withRootSeparator("");
 
-            this._objectFieldValueSeparatorWithSpaces =
-                this._separators.getObjectFieldValueSeparator() + " ";
+        public SnapshotPrettyPrinter() {
+            this.indentArraysWith(LF_ONLY_INDENTER);
+            this.indentObjectsWith(LF_ONLY_INDENTER);
+            this.withSeparators(DEFAULT_SEPARATORS);
         }
 
         @Override

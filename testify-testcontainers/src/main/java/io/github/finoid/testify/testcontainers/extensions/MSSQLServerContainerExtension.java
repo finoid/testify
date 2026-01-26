@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.testcontainers.containers.MSSQLServerContainer;
+import org.testcontainers.mssqlserver.MSSQLServerContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.Map;
@@ -34,7 +34,7 @@ import java.util.Map;
 public class MSSQLServerContainerExtension implements BeforeAllCallback, AfterAllCallback {
     private final Configuration configuration;
     @Nullable
-    private volatile MSSQLServerContainer<?> container;
+    private volatile MSSQLServerContainer container;
 
     private MSSQLServerContainerExtension() {
         this(Configuration.defaultConfiguration());
@@ -60,7 +60,7 @@ public class MSSQLServerContainerExtension implements BeforeAllCallback, AfterAl
 
         synchronized (this) {
             if (container == null) {
-                this.container = new MSSQLServerContainer<>(configuration.dockerImage)
+                this.container = new MSSQLServerContainer(configuration.dockerImage)
                     .acceptLicense()
                     .withPassword(configuration.password)
                     .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
@@ -78,7 +78,7 @@ public class MSSQLServerContainerExtension implements BeforeAllCallback, AfterAl
     @Override
     public void afterAll(final ExtensionContext context) throws Exception {
         // Stop only if not reusing, otherwise keep the container for performance purpose
-        final MSSQLServerContainer<?> container = this.container;
+        final MSSQLServerContainer container = this.container;
         if (container != null && container.isRunning() && !configuration.reuse) {
             container.stop();
         }
@@ -92,7 +92,7 @@ public class MSSQLServerContainerExtension implements BeforeAllCallback, AfterAl
      */
     @SuppressWarnings("resource")
     public String getHost() {
-        final MSSQLServerContainer<?> container = ensureInitialized();
+        final MSSQLServerContainer container = ensureInitialized();
 
         return container.getHost();
     }
@@ -105,7 +105,7 @@ public class MSSQLServerContainerExtension implements BeforeAllCallback, AfterAl
      */
     @SuppressWarnings("resource")
     public int getPort() {
-        final MSSQLServerContainer<?> container = ensureInitialized();
+        final MSSQLServerContainer container = ensureInitialized();
 
         return container.getFirstMappedPort();
     }
@@ -118,7 +118,7 @@ public class MSSQLServerContainerExtension implements BeforeAllCallback, AfterAl
      */
     @SuppressWarnings("resource")
     public String getJdbcUrl() {
-        final MSSQLServerContainer<?> container = ensureInitialized();
+        final MSSQLServerContainer container = ensureInitialized();
 
         return container.getJdbcUrl();
     }
@@ -131,7 +131,7 @@ public class MSSQLServerContainerExtension implements BeforeAllCallback, AfterAl
      */
     @SuppressWarnings("resource")
     public String getUsername() {
-        final MSSQLServerContainer<?> container = ensureInitialized();
+        final MSSQLServerContainer container = ensureInitialized();
 
         return container.getUsername();
     }
@@ -143,7 +143,7 @@ public class MSSQLServerContainerExtension implements BeforeAllCallback, AfterAl
      */
     @SuppressWarnings("resource")
     public String getPassword() {
-        final MSSQLServerContainer<?> container = ensureInitialized();
+        final MSSQLServerContainer container = ensureInitialized();
 
         return container.getPassword();
     }
@@ -177,8 +177,8 @@ public class MSSQLServerContainerExtension implements BeforeAllCallback, AfterAl
         );
     }
 
-    private MSSQLServerContainer<?> ensureInitialized() {
-        final MSSQLServerContainer<?> container = this.container;
+    private MSSQLServerContainer ensureInitialized() {
+        final MSSQLServerContainer container = this.container;
         if (container == null) {
             throw new IllegalStateException("MSSQLServerContainer is not created yet. Did you register the extension and let it start?");
         }
