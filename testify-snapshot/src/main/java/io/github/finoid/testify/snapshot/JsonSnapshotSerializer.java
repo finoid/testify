@@ -15,6 +15,7 @@ import io.github.finoid.testify.core.internal.Precondition;
 import tools.jackson.core.util.DefaultIndenter;
 import tools.jackson.core.util.DefaultPrettyPrinter;
 import tools.jackson.core.util.Separators;
+import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.cfg.DateTimeFeature;
@@ -109,8 +110,10 @@ public class JsonSnapshotSerializer implements SnapshotSerializer {
                 .defaultPrettyPrinter(new SnapshotPrettyPrinter())
                 .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
                 .enable(DateTimeFeature.WRITE_DATES_WITH_ZONE_ID)
+                .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
                 .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .disable(MapperFeature.SORT_CREATOR_PROPERTIES_FIRST)
                 .findAndAddModules()
                 .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
                 .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL))
