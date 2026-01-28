@@ -24,6 +24,7 @@ public class Base64SnapshotDsl extends ScenarioSnapshotDsl {
     }
 
     @Override
+    @SuppressWarnings("NullAway")
     public <T> void snapshot(final T toBeSnapshotted) {
         expect.serializer(new Base64SnapshotSerializer()) // TODO (nw) option to pass a simple module?
             .scenario(scenario)

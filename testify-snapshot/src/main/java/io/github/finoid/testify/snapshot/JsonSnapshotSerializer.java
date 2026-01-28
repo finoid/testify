@@ -126,6 +126,7 @@ public class JsonSnapshotSerializer implements SnapshotSerializer {
                 .withCreatorVisibility(JsonAutoDetect.Visibility.NONE)
                 .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
                 .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withIsGetterVisibility(JsonAutoDetect.Visibility.NONE)
         );
 
         return mapper;

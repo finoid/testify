@@ -27,6 +27,7 @@ public class JsonSnapshotDsl extends MaskingSnapshotDsl {
     }
 
     @Override
+    @SuppressWarnings("NullAway")
     public <T> void snapshot(final T toBeSnapshotted) {
         expect.serializer(new JsonSnapshotSerializer(maskedFieldPaths, new SimpleModule())) // TODO (nw) option to pass a simple module?
             .scenario(scenario)
