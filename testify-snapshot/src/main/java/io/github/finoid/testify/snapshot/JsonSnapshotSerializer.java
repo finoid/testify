@@ -121,7 +121,8 @@ public class JsonSnapshotSerializer implements SnapshotSerializer {
                     visibility.withFieldVisibility(JsonAutoDetect.Visibility.ANY)
                         .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
                         .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
-                        .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
+                        .withCreatorVisibility(JsonAutoDetect.Visibility.NONE)
+                        .withIsGetterVisibility(JsonAutoDetect.Visibility.NONE));
 
         builder.addModule(simpleModule);
         builder.addModule(new DeterministicCollectionModule()); // TODO (nw) use the one from java-snapshot-testing
