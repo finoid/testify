@@ -22,6 +22,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.Assert;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.Validator;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import tools.jackson.core.type.TypeReference;
@@ -123,7 +126,8 @@ public final class HttpAsserter {
     private ResultActions request(final RequestSpec requestSpec) throws Exception {
         final MockHttpServletRequestBuilder builder = requestSpec.getHttpMethod()
             .getBuilderResolver()
-            .resolve(requestSpec.url);
+            .resolve(requestSpec.url)
+            .params(requestSpec.parameters);
 
         return mvc.perform(builder
             .accept(requestSpec.getAcceptTypes().toArray(MediaType[]::new))
@@ -479,6 +483,7 @@ public final class HttpAsserter {
         Set<MediaType> acceptTypes;
         MediaType contentType;
         HttpHeaders httpHeaders;
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         @Nullable
         Object body;
 
@@ -532,6 +537,7 @@ public final class HttpAsserter {
             Set<MediaType> acceptTypes = Set.of(MediaType.APPLICATION_JSON);
             MediaType contentType = MediaType.APPLICATION_JSON;
             HttpHeaders httpHeaders = new HttpHeaders();
+            MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
             @Nullable
             Object body;
 
@@ -573,6 +579,12 @@ public final class HttpAsserter {
                 return this;
             }
 
+            public RequestSpecDsl withParam(String name, String... values) {
+                addToMultiValueMap(this.parameters, name, values);
+
+                return this;
+            }
+
             public RequestSpecDsl withBody(@Nullable final Object body) {
                 this.body = body;
 
@@ -594,7 +606,15 @@ public final class HttpAsserter {
              * @return the request specification
              */
             public RequestSpec toSpec() {
-                return new RequestSpec(httpMethod, url, acceptTypes, contentType, httpHeaders, body);
+                return new RequestSpec(httpMethod, url, acceptTypes, contentType, httpHeaders, parameters, body);
+            }
+
+            private static <T> void addToMultiValueMap(final MultiValueMap<String, T> map, final String name, final T[] values) {
+                Assert.hasLength(name, "'name' must not be empty");
+                Assert.notEmpty(values, "'values' must not be empty");
+                for (T value : values) {
+                    map.add(name, value);
+                }
             }
         }
 
