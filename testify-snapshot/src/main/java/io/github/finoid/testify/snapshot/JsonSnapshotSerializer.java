@@ -144,7 +144,7 @@ public class JsonSnapshotSerializer implements SnapshotSerializer {
         private static final DefaultPrettyPrinter.Indenter LF_ONLY_INDENTER = new DefaultIndenter("  ", "\n");
         private static final Separators DEFAULT_SEPARATORS = Separators.createDefaultInstance().withRootSeparator("");
 
-        public SnapshotPrettyPrinter() {
+        private SnapshotPrettyPrinter() {
             this.indentArraysWith(LF_ONLY_INDENTER);
             this.indentObjectsWith(LF_ONLY_INDENTER);
             this.withSeparators(DEFAULT_SEPARATORS);

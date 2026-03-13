@@ -444,7 +444,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
      */
     private class StandaloneConfiguration extends WebMvcConfigurationSupport {
 
-        @SuppressWarnings("removal")
+        @SuppressWarnings({"removal", "EffectivelyPrivate"})
         public RequestMappingHandlerMapping getHandlerMapping(
             FormattingConversionService mvcConversionService,
             ResourceUrlProvider mvcResourceUrlProvider) {
@@ -559,6 +559,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
 
         private final PropertyPlaceholderHelper.PlaceholderResolver resolver;
 
+        @SuppressWarnings({"removal", "EffectivelyPrivate"})
         public StaticStringValueResolver(Map<String, String> values) {
             this.helper = new PropertyPlaceholderHelper("${", "}", ":", null, false);
             this.resolver = values::get;
@@ -573,6 +574,7 @@ public class MockMvcBuilder extends AbstractMockMvcBuilder<StandaloneMockMvcBuil
     private static class StaticViewResolver implements ViewResolver {
         private final View view;
 
+        @SuppressWarnings({"removal", "EffectivelyPrivate"})
         public StaticViewResolver(final View view) {
             this.view = view;
         }

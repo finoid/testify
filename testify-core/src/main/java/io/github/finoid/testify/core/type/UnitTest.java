@@ -7,7 +7,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Base test class for unit-related tests that run in parallel.o
+ * Base test class for unit-related tests that run in parallel.
  */
 @Tag("UnitTest")
 @Execution(ExecutionMode.CONCURRENT) // run in parallel

@@ -35,7 +35,7 @@ public class JsonFormatter {
             char ch = input.charAt(i);
 
             switch (mode) {
-                case MODE_BETWEEN:
+                case MODE_BETWEEN -> {
                     switch (ch) {
                         case '{':
                         case '[':
@@ -71,16 +71,16 @@ public class JsonFormatter {
                             output.append(ch);
                             break;
                     }
-                    break;
-                case MODE_ESCAPE_SINGLE:
+                }
+                case MODE_ESCAPE_SINGLE -> {
                     output.append(ch);
                     mode = MODE_SINGLE;
-                    break;
-                case MODE_ESCAPE_DOUBLE:
+                }
+                case MODE_ESCAPE_DOUBLE -> {
                     output.append(ch);
                     mode = MODE_DOUBLE;
-                    break;
-                case MODE_SINGLE:
+                }
+                case MODE_SINGLE -> {
                     output.append(ch);
                     switch (ch) {
                         case '\'':
@@ -90,8 +90,8 @@ public class JsonFormatter {
                             mode = MODE_ESCAPE_SINGLE;
                             break;
                     }
-                    break;
-                case MODE_DOUBLE:
+                }
+                case MODE_DOUBLE -> {
                     output.append(ch);
                     switch (ch) {
                         case '"':
@@ -101,7 +101,7 @@ public class JsonFormatter {
                             mode = MODE_ESCAPE_DOUBLE;
                             break;
                     }
-                    break;
+                }
             }
         }
         return output.toString();

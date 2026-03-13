@@ -127,7 +127,13 @@ public final class HttpAsserter {
         final MockHttpServletRequestBuilder builder = requestSpec.getHttpMethod()
             .getBuilderResolver()
             .resolve(requestSpec.url)
-            .params(requestSpec.parameters);
+            .params(requestSpec.parameters)
+            .formFields(requestSpec.formFields)
+            .queryParams(requestSpec.queryParams);
+
+        if (requestSpec.remoteAddress != null) {
+            builder.remoteAddress(requestSpec.remoteAddress);
+        }
 
         return mvc.perform(builder
             .accept(requestSpec.getAcceptTypes().toArray(MediaType[]::new))
@@ -484,6 +490,10 @@ public final class HttpAsserter {
         MediaType contentType;
         HttpHeaders httpHeaders;
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> formFields = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        @Nullable
+        String remoteAddress;
         @Nullable
         Object body;
 
@@ -538,6 +548,10 @@ public final class HttpAsserter {
             MediaType contentType = MediaType.APPLICATION_JSON;
             HttpHeaders httpHeaders = new HttpHeaders();
             MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+            MultiValueMap<String, String> formFields = new LinkedMultiValueMap<>();
+            MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+            @Nullable
+            String remoteAddress;
             @Nullable
             Object body;
 
@@ -585,6 +599,24 @@ public final class HttpAsserter {
                 return this;
             }
 
+            public RequestSpecDsl withFormField(final String name, final String... values) {
+                addToMultiValueMap(this.formFields, name, values);
+
+                return this;
+            }
+
+            public RequestSpecDsl withQueryParam(final String name, final String... values) {
+                addToMultiValueMap(this.queryParams, name, values);
+
+                return this;
+            }
+
+            public RequestSpecDsl withRemoteAddress(final String remoteAddress) {
+                this.remoteAddress = Precondition.nonNull(remoteAddress, "RemoteAddress must not be null.");
+
+                return this;
+            }
+
             public RequestSpecDsl withBody(@Nullable final Object body) {
                 this.body = body;
 
@@ -606,7 +638,7 @@ public final class HttpAsserter {
              * @return the request specification
              */
             public RequestSpec toSpec() {
-                return new RequestSpec(httpMethod, url, acceptTypes, contentType, httpHeaders, parameters, body);
+                return new RequestSpec(httpMethod, url, acceptTypes, contentType, httpHeaders, parameters, formFields, queryParams, remoteAddress, body);
             }
 
             private static <T> void addToMultiValueMap(final MultiValueMap<String, T> map, final String name, final T[] values) {

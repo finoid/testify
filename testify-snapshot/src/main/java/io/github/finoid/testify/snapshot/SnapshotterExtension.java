@@ -96,11 +96,11 @@ public class SnapshotterExtension implements ParameterResolver, BeforeAllCallbac
     private static class State {
         Set<String> executedTestMethods = ConcurrentHashMap.newKeySet();
 
-        public void addExecutedTestMethod(final String testMethod) {
+        private void addExecutedTestMethod(final String testMethod) {
             executedTestMethods.add(testMethod);
         }
 
-        public int getExecutedMethodCount() {
+        private int getExecutedMethodCount() {
             return executedTestMethods.size();
         }
     }
