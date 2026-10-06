@@ -30,7 +30,7 @@
         <codequality-maven-plugin.version>0.12.12</codequality-maven-plugin.version>
         <commons-lang3.version>3.19.0</commons-lang3.version>
         <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
-        <jspecify.version>1.0.0</jspecify.version>
+        <jspecify.version>1.0.1</jspecify.version>
         <lombok.version>1.18.42</lombok.version>
 
 
