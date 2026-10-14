@@ -41,7 +41,7 @@
 
         <!-- Overrides Spring Boot managed versions with security fixes; remove once Spring Boot ships them -->
         <jackson-bom.version>3.2.3</jackson-bom.version>
-        <tomcat.version>11.0.26</tomcat.version>
+        <tomcat.version>11.0.27</tomcat.version>
 
         <code-quality.feature.enabled>true</code-quality.feature.enabled>
         <code-quality.configuration.checkstyle.suppression-location>checkstyle/checkstyle-suppressions.xml</code-quality.configuration.checkstyle.suppression-location>
