@@ -6,3 +6,8 @@ updates:
       interval: daily
       time: "21:00"
     open-pull-requests-limit: 10
+    ignore:
+      # Maven 3.10 writes maven-metadata-local.xml into the central-publishing staging dir, which
+      # the plugin doesn't clean up, so Central rejects the bundle. Remove once the plugin handles it.
+      - dependency-name: "org.apache.maven:apache-maven"
+        versions: [">= 3.10.0"]

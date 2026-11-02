@@ -36,7 +36,7 @@ jobs:
           echo "Setting build timestamp to: $BUILD_TIMESTAMP"
 
       - name: Build and Test
-        run: mvn clean verify --batch-mode -Dproject.build.outputTimestamp="${BUILD_TIMESTAMP}"
+        run: ./mvnw clean verify --batch-mode -Dproject.build.outputTimestamp="${BUILD_TIMESTAMP}"
 
       - name: Determine version from tag
         id: version
@@ -52,10 +52,10 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Set Maven version
-        run: mvn versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
+        run: ./mvnw versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
 
       - name: Publish to Maven Central
-        run: mvn deploy --batch-mode -Dproject.build.outputTimestamp="${BUILD_TIMESTAMP}"
+        run: ./mvnw deploy --batch-mode -Dproject.build.outputTimestamp="${BUILD_TIMESTAMP}"
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
