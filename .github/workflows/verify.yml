@@ -26,4 +26,4 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
 
       - name: Execute the verify step
-        run: mvn -B verify
+        run: ./mvnw -B verify
